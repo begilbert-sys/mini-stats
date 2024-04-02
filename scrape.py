@@ -16,12 +16,12 @@ today = datetime.datetime.now().date()
 
 with open('data.json') as file:
     data = json.load(file)
-    LAST_RUN_DATE = datetime.datetime.strptime(data['last_run'], "%Y-%m-%d").date()
+    last_run_date = datetime.datetime.strptime(data['last_run'], "%Y-%m-%d").date()
     word_count = Counter(data['word_count'])
 
 def get_mini_words(date: datetime.date) -> list:
     '''
-    Given a date, return every word from the mini of that date 
+    Given a date, return every word from the mini on that date 
     '''
     if not FIRST_MINI_DATE <= date <= today:
         raise ValueError(f"{date} is not a valid mini date")
@@ -47,10 +47,10 @@ def get_mini_words(date: datetime.date) -> list:
     return list(clues.values())
 
 word_frequency = Counter()
-date_range = (today - LAST_RUN_DATE).days
-current_date = LAST_RUN_DATE
+date_range = (today - last_run_date).days
+current_date = last_run_date
 
-#ensure data is always saved before closing
+# ensure data is always saved before closing
 @atexit.register
 def save_and_close():
     with open('data.json', 'w') as file:
@@ -60,7 +60,7 @@ def save_and_close():
 
 for day in range(1, date_range):
     time.sleep(RATELIMIT)
-    current_date = LAST_RUN_DATE + datetime.timedelta(days = day)
+    current_date = last_run_date + datetime.timedelta(days = day)
     word_list = get_mini_words(current_date)
     print(current_date, word_list)
     for word in word_list:
